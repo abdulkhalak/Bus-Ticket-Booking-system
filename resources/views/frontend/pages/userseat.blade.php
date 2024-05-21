@@ -1,71 +1,133 @@
-
 @extends('frontend.master_webpage')
 
 @section('content')
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Passenger Details</title>
-  <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid #dddddd;
-      text-align: left;
-      padding: 8px;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-  </style>
-</head>
-<body>
-
-<h2>Passenger Details</h2>
-<!-- <a href="">Book seat</a> -->
-
-<table>
-  <tr>
-    <th>Boarding Point</th>
-    <th>Dropping Point</th>
-    <th>Passenger Name</th>
-    <th>Passenger ID</th>
-    
-    <th>Passenger Email</th>
-    <th>Passenger Phone Number</th>
-  </tr>
+<style>
+  /* General Styles */
   
+  .container {
+ 
+    background-color: #fff;
    
-   @foreach ($userseat as $data)
-           
-         <tr>
-               <td>{{ $data->pickupPoint}}</td>
-               <td>{{ $data->droppingPoint}}</td>
-               <td>{{ $data->passengerName}}</td>
-               <td>{{ $data->passengerID}}</td>
-              
-               <td>{{ $data->passengerEmail}}</td>
-               <td>{{ $data->passengerPhoneNumber}}</td>
-                 
+  }
 
-               <td>
-                
-                <a class="btn btn-danger" href="{{route('seat.delete',$data->id)}}">Cancel Seat</a>
-                <a class="btn btn-success" href="">Make Payment</a>
-            </td>
+  h2 {
+    margin-top: 0;
+    color: #333;
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+  }
 
-               
-               </tr>
-            @endforeach
-  
-  <!-- Add more rows as needed -->
-</table>
+  .card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
 
-</body>
-</html>
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .card h5 {
+    margin-top: 0;
+    color: #007bff;
+    font-size: 22px;
+  }
+
+  .card p {
+    margin: 10px 0;
+    color: #555;
+    line-height: 1.6;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    background-color: #007bff;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.3s;
+    margin-right: 10px;
+    font-size: 16px;
+  }
+
+  .btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+  }
+
+  .btn-danger {
+    background-color: #dc3545;
+  }
+
+  .btn-danger:hover {
+    background-color: #c82333;
+  }
+
+  .btn-success {
+    background-color: #28a745;
+  }
+
+  .btn-success:hover {
+    background-color: #218838;
+  }
+
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .container {
+      padding: 15px;
+    }
+
+    .btn {
+      width: 100%;
+      margin: 10px 0;
+    }
+  }
+</style>
+
+<br>
+<br>
+
+<div class="container">
+  <h2>Passenger Details</h2>
+
+  @foreach ($bookingDetails as $data)
+  <div class="card">
+    <h5>From {{$data->route->from}} to {{$data->route->to}}</h5>
+    <p><strong>Passenger Name:</strong> {{ $data->passengerName }}</p>
+    <p><strong>Pickup Point:</strong> {{ $data->pickupPoint }}</p>
+    <p><strong>Dropping Point:</strong> {{ $data->droppingPoint }}</p>
+    <!-- <p><strong>Passenger ID:</strong> {{ $data->passengerID }}</p> -->
+    <p><strong>Seat:</strong> @foreach ($seats as $seat)
+                <span class="seat-number" style="padding: 5px 10px; margin-right: 5px; background-color: #007bff; color: #fff; border-radius: 4px;">{{$seat->seat_no}}</span>
+                @endforeach</p>
+    <p><strong>Total Fare:</strong>  {{ number_format($totalFare, 2) }} BDT</p>
+    <p><strong>Email:</strong> {{ $data->passengerEmail }}</p>
+    <p><strong>Phone Number:</strong> 0{{ $data->passengerPhoneNumber }}</p>
+    <a class="btn btn-danger" href="{{ route('seat.delete', $data->id) }}">Cancel Seat</a>
+    <a class="btn btn-success" href="">Make Payment</a>
+  </div>
+  @endforeach
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 @endsection

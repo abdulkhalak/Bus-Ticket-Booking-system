@@ -43,7 +43,6 @@ Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
 Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
 //SSLCOMMERZ END
 
-
 //for webpage
 Route::get('/', [WebpageController::class, 'homepage'])->name('homepage');
 // CoustomerRegistration
@@ -54,15 +53,11 @@ Route::post('/coustomer-do-login', [UserController::class, 'coustomerdoLogin'])-
 Route::get('/loginuser', [UserController::class, 'loginuser'])->name('login.user');
 Route::post('/user-do-login', [UserController::class, 'userdoLogin'])->name('user.do.login');
 
-
-
 Route::get('/search', [WebpageController::class, 'search'])->name('search.form');
 
 Route::get('/userseat', [WebpageController::class, 'userseat'])->name('user.seat');
 
 Route::get('/seat/delete/{id}', [WebpageController::class, 'seatDelete'])->name('seat.delete');
-
-
 
 Route::get('/all-products', [ProductController::class, 'allProducts'])->name('all.products');
 
@@ -70,7 +65,6 @@ Route::get('/about', [AboutController::class, 'about'])->name('about');
 
 // Route::get('/report/list', [ProductController::class, 'list'])->name('product.list');
 // Route::get('/report/create/form', [ProductController::class, 'createForm'])->name('product.create.form');
-
 
 //About Page
 Route::get('/about', [AboutController::class, 'about'])->name('about');
@@ -118,18 +112,11 @@ Route::group(['prefix' => 'admin'], function () {
         //bus delete
         Route::get('/bus/delete/{id}', [CategoryController::class, 'busdelete'])->name('bus.delete');
 
-
-
-
         //location
 
         Route::get('/location', [LocationController::class, 'Viewlocation'])->name('location');
         Route::post('/location/store', [LocationController::class, 'locationStore'])->name('location.store');
         Route::get('/location/data', [LocationController::class, 'locationData'])->name('location.data');
-
-
-
-
 
         //route
 
@@ -139,7 +126,6 @@ Route::group(['prefix' => 'admin'], function () {
 
         //route view
         Route::get('/route/view/{id}', [RouteController::class, 'routeView'])->name('route.view');
-
 
         //route delet
         Route::get('/route/delete/{id}', [RouteController::class, 'routeDelete'])->name('route.delete');
@@ -156,30 +142,17 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/counter/store', [CounterController::class, 'StoreCounter'])->name('counter.store');
         Route::get('/counter/data', [CounterController::class, 'CounterData'])->name('counter.data');
 
-
-
         //ticket
         Route::get('/ticket', [TicketController::class, 'ViewTicket'])->name('ticket');
 
-
-
-
-
-
-
-        //passenger
+      //passenger
         Route::get('/passenger', [PassengerController::class, 'ViewPassenger'])->name('passenger');
-
-
 
         //payment
         Route::get('/payment', [PaymentController::class, 'ViewPayment'])->name('payment');
 
         //report
         Route::get('/report', [ReportController::class, 'ViewReport'])->name('report');
-
-
-
 
         Route::get('sign-out', [UserController::class, 'signout'])->name('do.signout');
     });

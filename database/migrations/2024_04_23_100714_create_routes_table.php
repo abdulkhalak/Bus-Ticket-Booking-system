@@ -16,6 +16,10 @@ return new class extends Migration
             $table->id();
             $table->string('from');//mandatory
             $table->string('to');
+            $table->string('supervisor_name');
+            $table->integer('supervisor_phone');
+            $table->date('date');
+            $table->time('time');
             $table->integer('fare');
             $table->string('type');
             $table->integer('bus_id');

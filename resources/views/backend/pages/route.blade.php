@@ -70,9 +70,21 @@
   </select>
   <br>
   <br>
-  <label for="time">time</label><br>
-  <input type="time" id="time" name="time" value=""><br>
-<br>
+  <label for="sName">Supervisor Name</label><br>
+  <input type="text" id="sName" name="supervisor_name" value="" required><br>
+  <br>
+
+  <label for="sPhone">Supervisor Phone No</label><br>
+  <input type="integer" id="sPhone" name="supervisor_phone" value="" required><br>
+  <br>
+
+  <label for="date">Date</label><br>
+  <input type="date" id="date" name="date" min="{{ date('Y-m-d') }}" required><br>
+  <br>
+
+  <label for="time">Departure Time</label><br>
+  <input type="time" id="time" name="time" value="" required><br>
+  <br>
 
   <label for="fare">Fare</label><br>
   <input type="text" id="fare" name="fare" value=""><br>
@@ -82,7 +94,7 @@
     <option selected>Choose...</option>
     <option value="Ac">Ac</option>
     <option value="Non Ac">Non Ac</option>
-  
+
   </select>
 
   <label for="busId">Bus ID:</label><br>

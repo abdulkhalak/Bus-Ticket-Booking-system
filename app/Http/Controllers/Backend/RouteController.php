@@ -34,21 +34,34 @@ class RouteController extends Controller
     $checkValidation = Validator::make($request->all(), [
       'from' => 'required',
       'to' => 'required',
+      'supervisor_name' => 'required',
+      'supervisor_phone' => 'required',
+      'date' => 'required',
+      'time' => 'required',
       'fare' => 'required',
       'type' => 'required',
       'bus_id' => 'required',
-
     ]);
+
+    if($checkValidation->fails()){
+      return redirect()->back()->withErrors($checkValidation);
+    }
+    // dd($request->all());
 
     Route::create([
 
       'from' => $request->from,
       'to' => $request->to,
+      'supervisor_name' => $request->supervisor_name,
+      'supervisor_phone' => $request->supervisor_phone,
+      'date' => $request->date,
+      'time' => $request->time,
       'fare' => $request->fare,
       'type' => $request->type,
       'bus_id' => $request->bus_id,
     ]);
 
+    notify()->success('Route create successfully.');
     return redirect()->back();
   }
 
@@ -101,6 +114,7 @@ class RouteController extends Controller
 
     ]);
 
+    notify()->success('Updated successful.');
     return redirect()->route('route.data');
   }
 

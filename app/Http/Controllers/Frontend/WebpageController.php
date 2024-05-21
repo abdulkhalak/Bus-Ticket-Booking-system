@@ -105,9 +105,24 @@ class WebpageController extends Controller
 
     public function userseat()
     {
-        $userseat = Bookseat::where('passengerID',auth('userGuard')->user()->id)->get();
+        // $userseat = Bookseat::where('passengerID',auth('userGuard')->user()->id)->get();
 
-        return view('frontend.pages.userseat', compact('userseat'));
+        $bookingDetails = Bookseat::with(['route', 'seats'])
+        ->where('passengerID', auth('userGuard')->user()->id)
+        ->get();
+
+        if ($bookingDetails->isNotEmpty()) {
+            $route = $bookingDetails->first()->route;
+            $seats = $bookingDetails->pluck('seats')->flatten();
+            $totalFare = $seats->sum('fare');
+            // dd($totalFare);
+        } else {
+            $route = null;
+            $seats = collect();
+            $totalFare = 0;
+        }
+        // dd($bookingDetails);
+        return view('frontend.pages.userseat', compact('bookingDetails', 'route', 'seats', 'totalFare'));
     }
 
     public function seatDelete($s_id)
@@ -118,4 +133,5 @@ class WebpageController extends Controller
 
         return redirect()->back();
     }
+    
 }
