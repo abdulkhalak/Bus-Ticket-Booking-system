@@ -12,7 +12,7 @@ use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Frontend\AboutController;
 use App\Http\Controllers\Frontend\WebpageController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\SslCommerzPaymentController;
+use App\Http\Controllers\Frontend\SslCommerzPaymentController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,19 +29,9 @@ use Illuminate\Support\Facades\Route;
 
 
 
-// SSLCOMMERZ Start
-Route::get('/example1', [SslCommerzPaymentController::class, 'exampleEasyCheckout']);
-Route::get('/example2', [SslCommerzPaymentController::class, 'exampleHostedCheckout']);
 
-Route::post('/pay', [SslCommerzPaymentController::class, 'index']);
-Route::post('/pay-via-ajax', [SslCommerzPaymentController::class, 'payViaAjax']);
 
-Route::post('/success', [SslCommerzPaymentController::class, 'success']);
-Route::post('/fail', [SslCommerzPaymentController::class, 'fail']);
-Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
 
-Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
-//SSLCOMMERZ END
 
 //for webpage
 Route::get('/', [WebpageController::class, 'homepage'])->name('homepage');
@@ -82,6 +72,24 @@ Route::group(['middleware' => 'passengerAuth'], function () {
     //Coustomer UserProfile
     Route::get('/userprofile', [UserController::class, 'userprofile'])->name('user.profile');
     Route::get('/booking/details/{id}', [UserController::class, 'bookingDetails'])->name('booking.details');
+
+    //Pay button
+    Route::get('/paynow/{id}', [WebpageController::class, 'makepay'])->name('make.pay');
+    
+    // SSLCOMMERZ Start
+    Route::get('/example1', [SslCommerzPaymentController::class, 'exampleEasyCheckout']);
+    Route::get('/example2', [SslCommerzPaymentController::class, 'exampleHostedCheckout']);
+
+    Route::post('/pay', [SslCommerzPaymentController::class, 'index'])->name('pay');
+    Route::post('/pay-via-ajax', [SslCommerzPaymentController::class, 'payViaAjax']);
+
+    Route::post('/success', [SslCommerzPaymentController::class, 'success']);
+    Route::post('/fail', [SslCommerzPaymentController::class, 'fail']);
+    Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
+
+    Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
+    //SSLCOMMERZ END.
+
 
     // Coustomer Logout
     Route::get('log-out', [UserController::class, 'logout'])->name('do.logout');
@@ -145,7 +153,7 @@ Route::group(['prefix' => 'admin'], function () {
         //ticket
         Route::get('/ticket', [TicketController::class, 'ViewTicket'])->name('ticket');
 
-      //passenger
+        //passenger
         Route::get('/passenger', [PassengerController::class, 'ViewPassenger'])->name('passenger');
 
         //payment

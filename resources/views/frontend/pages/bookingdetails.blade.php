@@ -37,7 +37,7 @@
         </div>
         <div class="booking-details-row" style="display: flex; justify-content: space-between; margin-bottom: 10px; padding: 10px; background-color: #f2f2f2; border-radius: 4px;">
             <span class="booking-details-label" style="font-weight: bold; color: #555;">Time:</span>
-            <span class="booking-details-value" style="color: #333;">08:00 AM</span>
+            <span class="booking-details-value" style="color: #333;">{{ date('h:i A', strtotime($route->time)) }}</span>
         </div>
         <div class="booking-details-row" style="display: flex; justify-content: space-between; margin-bottom: 10px; padding: 10px; background-color: #f2f2f2; border-radius: 4px;">
             <span class="booking-details-label" style="font-weight: bold; color: #555;">Payment Status:</span>

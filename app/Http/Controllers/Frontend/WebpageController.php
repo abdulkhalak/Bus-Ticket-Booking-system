@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Library\SslCommerz\SslCommerzNotification;
 use App\Models\Bookseat;
 use App\Models\Counter;
 use App\Models\Location;
@@ -42,12 +43,11 @@ class WebpageController extends Controller
         // dd(request()->date);
         $route = Route::find($rId);
         $bookedSeats = Seat::where('route_id', $rId)
-                        ->whereDate('booking_date',request()->date)
-                        ->pluck('seat_no')->toArray();
+            ->whereDate('booking_date', request()->date)
+            ->pluck('seat_no')->toArray();
 
         // dd($route );
-        return view('frontend.pages.seat', compact('route','bookedSeats', 'counters'));
-      
+        return view('frontend.pages.seat', compact('route', 'bookedSeats', 'counters'));
     }
 
 
@@ -65,9 +65,9 @@ class WebpageController extends Controller
             'id' => 'required',
             'email' => 'required',
             'phone' => 'required',
-            
+
         ]);
-        
+
         // insert data into booking table
         $booking = Bookseat::create([
             'pickupPoint' => $request->boarding,
@@ -78,7 +78,7 @@ class WebpageController extends Controller
             'passengerPhoneNumber' => $request->phone,
             'date' => $request->date,
             'route_id' => $route->id,
-          
+
         ]);
 
 
@@ -86,21 +86,21 @@ class WebpageController extends Controller
         //foreach($request->seat as $seat)
         $arr = explode(',', $request->seat);
         // dd($arr);
-        foreach($arr as $seat){
+        foreach ($arr as $seat) {
 
             Seat::create([
-                'bookseat_id'=> $booking->id,
-                'seat_no'=> $seat,
-                'fare'=> $route->fare, 
+                'bookseat_id' => $booking->id,
+                'seat_no' => $seat,
+                'fare' => $route->fare,
                 'route_id' => $route->id,
                 'booking_date' =>   $booking->date
             ]);
-        //insert into booking details
-    }
+            //insert into booking details
+        }
 
         return redirect()->route('user.seat');
         // return redirect()->back();
-}
+    }
 
 
     public function userseat()
@@ -108,8 +108,8 @@ class WebpageController extends Controller
         // $userseat = Bookseat::where('passengerID',auth('userGuard')->user()->id)->get();
 
         $bookingDetails = Bookseat::with(['route', 'seats'])
-        ->where('passengerID', auth('userGuard')->user()->id)
-        ->get();
+            ->where('passengerID', auth('userGuard')->user()->id)
+            ->get();
 
         if ($bookingDetails->isNotEmpty()) {
             $route = $bookingDetails->first()->route;
@@ -122,6 +122,9 @@ class WebpageController extends Controller
             $totalFare = 0;
         }
         // dd($bookingDetails);
+
+        // $this->makepayment($bookingDetails);
+        notify()->success('Ticket book Successful');
         return view('frontend.pages.userseat', compact('bookingDetails', 'route', 'seats', 'totalFare'));
     }
 
@@ -133,5 +136,88 @@ class WebpageController extends Controller
 
         return redirect()->back();
     }
-    
+
+
+    public function makepay($id)
+    {
+        $bookingDetails = Bookseat::with(['route', 'seats'])
+            ->where('passengerID', auth('userGuard')->user()->id)
+            ->get();
+        // dd($bookingDetails);
+
+        if ($bookingDetails->isNotEmpty()) {
+            $route = $bookingDetails->first()->route;
+            $seats = $bookingDetails->pluck('seats')->flatten();
+            $totalFare = $seats->sum('fare');
+            // dd($totalFare);
+        } else {
+            $route = null;
+            $seats = collect();
+            $totalFare = 0;
+        }
+        // $booking=Bookseat::find($id);
+        $this->payment($bookingDetails, $totalFare);
+        return redirect()->route('user.seat');
+    }
+
+
+    public function payment($bookingDetails, $totalFare)
+    {
+        $firstBooking = $bookingDetails->first();
+        if (!$firstBooking) {
+            // Handle the case where there are no bookings
+            notify()->error('No booking details found.');
+            return redirect()->route('user.seat');
+        }
+        // dd($firstBooking);
+        $post_data = array();
+        $post_data['total_amount'] = (int)$totalFare; # You cant not pay less than 10
+        $post_data['currency'] = "BDT";
+        $post_data['tran_id'] = uniqid(); // tran_id must be unique
+        
+        # CUSTOMER INFORMATION
+        $post_data['cus_name'] = $firstBooking->passengerName;
+        $post_data['cus_email'] = $firstBooking->passengerEmail;
+        dd($post_data);
+        $post_data['cus_add1'] = 'Customer Address';
+        $post_data['cus_add2'] = "";
+        $post_data['cus_city'] = "";
+        $post_data['cus_state'] = "";
+        $post_data['cus_postcode'] = "";
+        $post_data['cus_country'] = "Bangladesh";
+        $post_data['cus_phone'] = '8801XXXXXXXXX';
+        $post_data['cus_fax'] = "";
+
+        # SHIPMENT INFORMATION
+        $post_data['ship_name'] = "Store Test";
+        $post_data['ship_add1'] = "Dhaka";
+        $post_data['ship_add2'] = "Dhaka";
+        $post_data['ship_city'] = "Dhaka";
+        $post_data['ship_state'] = "Dhaka";
+        $post_data['ship_postcode'] = "1000";
+        $post_data['ship_phone'] = "";
+        $post_data['ship_country'] = "Bangladesh";
+
+        $post_data['shipping_method'] = "NO";
+        $post_data['product_name'] = "Computer";
+        $post_data['product_category'] = "Goods";
+        $post_data['product_profile'] = "physical-goods";
+
+        # OPTIONAL PARAMETERS
+        $post_data['value_a'] = "ref001";
+        $post_data['value_b'] = "ref002";
+        $post_data['value_c'] = "ref003";
+        $post_data['value_d'] = "ref004";
+        #Before  going to initiate the payment order status need to insert or update as Pending.
+
+        $sslc = new SslCommerzNotification();
+        # initiate(Transaction Data , false: Redirect to SSLCOMMERZ gateway/ true: Show all the Payement gateway here )
+        $payment_options = $sslc->makePayment($post_data, 'hosted');
+        
+
+        if (!is_array($payment_options)) {
+            print_r($payment_options);
+            $payment_options = array();
+        }
+    }
 }

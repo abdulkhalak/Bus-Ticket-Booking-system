@@ -112,8 +112,10 @@
     <p><strong>Total Fare:</strong>  {{ number_format($totalFare, 2) }} BDT</p>
     <p><strong>Email:</strong> {{ $data->passengerEmail }}</p>
     <p><strong>Phone Number:</strong> 0{{ $data->passengerPhoneNumber }}</p>
+
+    <a class="btn btn-warning" href="{{ route('make.pay', $data->id) }}">Make Payment</a>
     <a class="btn btn-danger" href="{{ route('seat.delete', $data->id) }}">Cancel Seat</a>
-    <a class="btn btn-success" href="">Make Payment</a>
+  
   </div>
   @endforeach
 </div>

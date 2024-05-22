@@ -19,6 +19,7 @@ class AboutController extends Controller
     {
         return view('frontend.pages.brancelocation');
     }
+
    
    
 }

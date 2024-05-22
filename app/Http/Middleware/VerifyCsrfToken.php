@@ -16,6 +16,6 @@ class VerifyCsrfToken extends Middleware
         '/cancel',
         '/fail',
         '/ipn',
-        '/pay-via-ajax', 
+        '/pay-via-ajax', // only required to run example codes. Please see bellow.
     ];
 }
