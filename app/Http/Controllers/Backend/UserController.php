@@ -109,23 +109,21 @@ class UserController extends Controller
 
     public function userprofile()
     {
-        $userseat = Bookseat::all();
+        $booking = Bookseat::where('passengerID',auth('userGuard')->user()->id)->orderBy('id','desc')->get();
 
-        return view('frontend.pages.userprofile', compact('userseat'));
+        return view('frontend.pages.userprofile', compact('booking'));
     }
 
     public function bookingDetails($id)
     {
-        $bookingDetails = Bookseat::with(['route', 'seats'])
-        ->where('passengerID', $id)
-        ->get();
+        $bookingDetails = Bookseat::with(['route', 'seats'])->find($id);
         // dd($bookingDetails);
 
         // Ensure bookingDetails are not empty
-        if ($bookingDetails->isNotEmpty()) {
-            $route = $bookingDetails->first()->route;
-            $seats = $bookingDetails->pluck('seats')->flatten();
-            $totalFare = $seats->sum('fare');
+        if ($bookingDetails) {
+            $route = $bookingDetails->route;
+            $seats = $bookingDetails->seats;
+            $totalFare = $bookingDetails->seats->pluck('fare')->sum();
             // dd($totalFare);
         } else {
             $route = null;

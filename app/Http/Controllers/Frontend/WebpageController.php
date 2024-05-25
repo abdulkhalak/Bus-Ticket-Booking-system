@@ -78,7 +78,6 @@ class WebpageController extends Controller
             'passengerPhoneNumber' => $request->phone,
             'date' => $request->date,
             'route_id' => $route->id,
-
         ]);
 
 
@@ -98,23 +97,22 @@ class WebpageController extends Controller
             //insert into booking details
         }
 
-        return redirect()->route('user.seat');
+        return redirect()->route('user.seat',$booking->id);
         // return redirect()->back();
     }
 
 
-    public function userseat()
+    public function userseat($bookingId)
     {
         // $userseat = Bookseat::where('passengerID',auth('userGuard')->user()->id)->get();
 
-        $bookingDetails = Bookseat::with(['route', 'seats'])
-            ->where('passengerID', auth('userGuard')->user()->id)
-            ->get();
+        $bookingDetails = Bookseat::with(['route', 'seats'])->find($bookingId);
 
-        if ($bookingDetails->isNotEmpty()) {
-            $route = $bookingDetails->first()->route;
-            $seats = $bookingDetails->pluck('seats')->flatten();
-            $totalFare = $seats->sum('fare');
+        if ($bookingDetails) {
+            $route = $bookingDetails->route;
+           
+            $seats = $bookingDetails->seats;
+            $totalFare =$bookingDetails->seats->pluck('fare')->sum();
             // dd($totalFare);
         } else {
             $route = null;
@@ -140,45 +138,39 @@ class WebpageController extends Controller
 
     public function makepay($id)
     {
-        $bookingDetails = Bookseat::with(['route', 'seats'])
-            ->where('passengerID', auth('userGuard')->user()->id)
-            ->get();
+       
+        $booking = Bookseat::with(['route', 'seats'])->find($id);
         // dd($bookingDetails);
 
-        if ($bookingDetails->isNotEmpty()) {
-            $route = $bookingDetails->first()->route;
-            $seats = $bookingDetails->pluck('seats')->flatten();
-            $totalFare = $seats->sum('fare');
+        if ($booking) {
+    
+            $totalFare =$booking->seats->pluck('fare')->sum();
+
+            $this->payment($booking, $totalFare);
+            return redirect()->route('user.seat',$id);
             // dd($totalFare);
-        } else {
-            $route = null;
-            $seats = collect();
-            $totalFare = 0;
-        }
+        } 
+
+        notify()->error("something went wrong. Please try again.");
+        return redirect()->back();
         // $booking=Bookseat::find($id);
-        $this->payment($bookingDetails, $totalFare);
-        return redirect()->route('user.seat');
+       
     }
 
 
-    public function payment($bookingDetails, $totalFare)
+    public function payment($booking, $totalFare)
     {
-        $firstBooking = $bookingDetails->first();
-        if (!$firstBooking) {
-            // Handle the case where there are no bookings
-            notify()->error('No booking details found.');
-            return redirect()->route('user.seat');
-        }
+       
         // dd($firstBooking);
         $post_data = array();
         $post_data['total_amount'] = (int)$totalFare; # You cant not pay less than 10
         $post_data['currency'] = "BDT";
-        $post_data['tran_id'] = uniqid(); // tran_id must be unique
+        $post_data['tran_id'] =$booking->id ; // tran_id must be unique
         
         # CUSTOMER INFORMATION
-        $post_data['cus_name'] = $firstBooking->passengerName;
-        $post_data['cus_email'] = $firstBooking->passengerEmail;
-        dd($post_data);
+        $post_data['cus_name'] = $booking->passengerName;
+        $post_data['cus_email'] = $booking->passengerEmail;
+       
         $post_data['cus_add1'] = 'Customer Address';
         $post_data['cus_add2'] = "";
         $post_data['cus_city'] = "";

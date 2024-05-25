@@ -5,6 +5,7 @@ use App\Http\Controllers\controller;
 use DB;
 use Illuminate\Http\Request;
 use App\Library\SslCommerz\SslCommerzNotification;
+use App\Models\Bookseat;
 
 class SslCommerzPaymentController extends Controller
 {
@@ -161,7 +162,7 @@ class SslCommerzPaymentController extends Controller
 
     public function success(Request $request)
     {
-        echo "Transaction is Successful";
+       
 
         $tran_id = $request->input('tran_id');
         $amount = $request->input('amount');
@@ -170,11 +171,8 @@ class SslCommerzPaymentController extends Controller
         $sslc = new SslCommerzNotification();
 
         #Check order status in order tabel against the transaction id or order id.
-        $order_details = DB::table('orders')
-            ->where('transaction_id', $tran_id)
-            ->select('transaction_id', 'status', 'currency', 'amount')->first();
-
-        if ($order_details->status == 'Pending') {
+        $booking = Bookseat::find($tran_id);
+        if ($booking->status == 'pending') {
             $validation = $sslc->orderValidate($request->all(), $tran_id, $amount, $currency);
 
             if ($validation) {
@@ -183,21 +181,23 @@ class SslCommerzPaymentController extends Controller
                 in order table as Processing or Complete.
                 Here you can also sent sms or email for successfull transaction to customer
                 */
-                $update_product = DB::table('orders')
-                    ->where('transaction_id', $tran_id)
-                    ->update(['status' => 'Processing']);
+                $update_booking = $booking->update([
+                    'status' => 'confirm',
+                    'payment_status' => 'success',
+                ]);
 
-                echo "<br >Transaction is successfully Completed";
+                notify()->success('Payment success.');
+
+                return redirect()->route('user.profile');
+
+                
             }
-        } else if ($order_details->status == 'Processing' || $order_details->status == 'Complete') {
-            /*
-             That means through IPN Order status already updated. Now you can just show the customer that transaction is completed. No need to udate database.
-             */
-            echo "Transaction is successfully Completed";
-        } else {
-            #That means something wrong happened. You can redirect customer to your product page.
-            echo "Invalid Transaction";
         }
+
+        notify()->error('Payment failed.');
+
+        return redirect()->route('homepage');
+       
 
 
     }

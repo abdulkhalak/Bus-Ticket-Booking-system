@@ -45,7 +45,7 @@ Route::post('/user-do-login', [UserController::class, 'userdoLogin'])->name('use
 
 Route::get('/search', [WebpageController::class, 'search'])->name('search.form');
 
-Route::get('/userseat', [WebpageController::class, 'userseat'])->name('user.seat');
+Route::get('/userseat/{booking_id}', [WebpageController::class, 'userseat'])->name('user.seat');
 
 Route::get('/seat/delete/{id}', [WebpageController::class, 'seatDelete'])->name('seat.delete');
 
@@ -71,8 +71,9 @@ Route::group(['middleware' => 'passengerAuth'], function () {
     Route::post('/bookseat/{routeId}', [WebpageController::class, 'storebookseat'])->name('bookseat');
     //Coustomer UserProfile
     Route::get('/userprofile', [UserController::class, 'userprofile'])->name('user.profile');
+    // Route::get('/user/booking', [UserController::class, 'userBooking'])->name('user.booking');
     Route::get('/booking/details/{id}', [UserController::class, 'bookingDetails'])->name('booking.details');
-
+   
     //Pay button
     Route::get('/paynow/{id}', [WebpageController::class, 'makepay'])->name('make.pay');
     
@@ -106,6 +107,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/', [HomeController::class, 'showHomePage'])->name('dashboard');
 
         Route::get('/order/list', [HomeController::class, 'orderList'])->name('order.list');
+
+        Route::get('/booking/details/{id}', [TicketController::class, 'bookingDetails'])->name('admin.booking.details');
 
         //bus
 

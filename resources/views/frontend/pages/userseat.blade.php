@@ -98,26 +98,22 @@
 
 <div class="container">
   <h2>Passenger Details</h2>
-
-  @foreach ($bookingDetails as $data)
   <div class="card">
-    <h5>From {{$data->route->from}} to {{$data->route->to}}</h5>
-    <p><strong>Passenger Name:</strong> {{ $data->passengerName }}</p>
-    <p><strong>Pickup Point:</strong> {{ $data->pickupPoint }}</p>
-    <p><strong>Dropping Point:</strong> {{ $data->droppingPoint }}</p>
-    <!-- <p><strong>Passenger ID:</strong> {{ $data->passengerID }}</p> -->
+    <h5>From {{$bookingDetails->route->from}} to {{$bookingDetails->route->to}}</h5>
+    <p><strong>Passenger Name:</strong> {{ $bookingDetails->passengerName }}</p>
+    <p><strong>Pickup Point:</strong> {{ $bookingDetails->pickupPoint }}</p>
+    <p><strong>Dropping Point:</strong> {{ $bookingDetails->droppingPoint }}</p>
     <p><strong>Seat:</strong> @foreach ($seats as $seat)
                 <span class="seat-number" style="padding: 5px 10px; margin-right: 5px; background-color: #007bff; color: #fff; border-radius: 4px;">{{$seat->seat_no}}</span>
                 @endforeach</p>
     <p><strong>Total Fare:</strong>  {{ number_format($totalFare, 2) }} BDT</p>
-    <p><strong>Email:</strong> {{ $data->passengerEmail }}</p>
-    <p><strong>Phone Number:</strong> 0{{ $data->passengerPhoneNumber }}</p>
+    <p><strong>Email:</strong> {{ $bookingDetails->passengerEmail }}</p>
+    <p><strong>Phone Number:</strong> 0{{ $bookingDetails->passengerPhoneNumber }}</p>
 
-    <a class="btn btn-warning" href="{{ route('make.pay', $data->id) }}">Make Payment</a>
-    <a class="btn btn-danger" href="{{ route('seat.delete', $data->id) }}">Cancel Seat</a>
+    <a class="btn btn-warning" href="{{ route('make.pay', $bookingDetails->id) }}">Make Payment</a>
+    <a class="btn btn-danger" href="{{ route('seat.delete', $bookingDetails->id) }}">Cancel Seat</a>
   
   </div>
-  @endforeach
 </div>
 
 

@@ -64,36 +64,52 @@
 							</div>
 						</div>
 						<hr>
-						<!-- <div class="row mb-3">
+						<div class="row mb-3">
 							<div class="col-sm-3">
-								<h6 class="mb-0">Details</h6>
+								<h6 class="mb-0">My Booking</h6>
 							</div>
 
 						</div>
 						<div class="row">
 							<div class="col-sm-3"></div>
-							<table class="table table-bordered">
-								<thead>
-									<tr>
-										<th scope="col">Serial</th>
-										<th scope="col">From</th>
-										<th scope="col">To</th>
-										<th scope="col">Seat</th>
-										<th scope="col">Total Fare</th>
-									</tr>
-								</thead>
-								<tbody>
-									@foreach($userseat as $data)
-									<tr>
-										<th scope="row">1</th>
-										<td>{{ $data->pickupPoint}}</td>
-										<td>Otto</td>
-										<td>@mdo</td>
-										<td>@mdo</td>
-									</tr>
-									@endforeach
-								</tbody>
-							</table> -->
+							<table class="table table-striped table-dark">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Customer Name</th>
+      <th scope="col">From</th>
+      <th scope="col">To</th>
+      <th scope="col">Date</th>
+      <th scope="col">Total</th>
+      <th scope="col">Status</th>
+      <th scope="col">Payment Status</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+
+  @foreach ($booking as $key=>$book )
+   
+    <tr>
+      <th scope="row">{{$key+1}}</th>
+      <td>{{$book->passengerName}}</td>
+      <td>{{$book->route->from}}</td>
+      <td>{{$book->route->to}}</td>
+      <td>{{$book->created_at}}</td>
+      <td>{{$book->seats->pluck('fare')->sum()}}</td>
+      <td>{{$book->status}}</td>
+      <td>{{$book->payment_status}}</td>
+      <td>
+        <a href="{{route('booking.details',$book->id)}}" class="btn btn-success">View Ticket</a>
+      </td>
+     
+    </tr>
+
+     
+  @endforeach
+   
+  </tbody>
+</table>
 						</div>
 					</div>
 				</div>

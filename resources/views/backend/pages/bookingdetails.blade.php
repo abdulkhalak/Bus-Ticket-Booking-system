@@ -1,4 +1,4 @@
-@extends('frontend.master_webpage')
+@extends('backend.master')
 
 @section('content')
 
@@ -42,15 +42,15 @@
         </div>
         <div class="booking-details-row" style="display: flex; justify-content: space-between; margin-bottom: 10px; padding: 10px; background-color: #f2f2f2; border-radius: 4px;">
             <span class="booking-details-label" style="font-weight: bold; color: #555;">Payment Status:</span>
-            <span class="booking-details-value" style="color: #333;">{{$bookingDetails->payment_status}}</span>
+            <span class="booking-details-value" style="color: #333;">Paid</span>
         </div>
         <div class="booking-details-row" style="display: flex; justify-content: space-between; margin-bottom: 10px; padding: 10px; background-color: #f2f2f2; border-radius: 4px;">
             <span class="booking-details-label" style="font-weight: bold; color: #555;">Booking Status:</span>
-            <span class="booking-details-value" style="color: #333;">{{$bookingDetails->status}}</span>
+            <span class="booking-details-value" style="color: #333;">Confirmed</span>
         </div>
         <div class="booking-details-row" style="display: flex; justify-content: space-between; margin-bottom: 10px; padding: 10px; background-color: #f2f2f2; border-radius: 4px;">
             <span class="booking-details-label" style="font-weight: bold; color: #555;">Contact Info:</span>
-            <span class="booking-details-value" style="color: #333;">{{$bookingDetails->passengerPhoneNumber}}</span>
+            <span class="booking-details-value" style="color: #333;">123-456-7890</span>
         </div>
     </div>
     <div style="text-align: center; margin-top: 20px;">
